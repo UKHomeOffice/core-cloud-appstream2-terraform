@@ -28,6 +28,26 @@ description of the pull request should include a link to the issue, which can be
 The pull request must be reviewed by a member of our team and pass the checks in our pipelines
 before it can be squashed and merged.
 
+## Labeling
+
+We use a five-label scheme to drive our semantic-release workflow. Please apply one of the following to each PR:
+
+| Label          | Color   | When to use  
+| ---------------|---------|----------------------------------------------------------------------------|
+|**dependencies**|`#82B602`|Updates or changes to project dependencies (module, provider, lib_ver upd)  |
+| **major** |`#B60205`|Incompatible API changes. Must include a `BREAKING CHANGE:` in the commit footer.|
+| **minor** | `#1D76DB` | New features or enhancements in a backwards-compatible way.                   |
+| **patch** | `#0E8A16` | Backwards-compatible bug fixes.                                               |
+| **skip-release** | `#FBCA04` | Non-code changes (typos, docs, formatting, CI tweaks) that should not trigger a release |
+
+– **dependencies** PRs typically look like `chore(deps): bump aws provider to v5.2.0`.  
+– **major** PRs must document breaking changes with a `BREAKING CHANGE:` footer.  
+– **minor** PRs add new variables, outputs, examples, or optional features.  
+– **patch** PRs fix bugs or correct typos.  
+– **skip-release** PRs are docs-only, formatting, or CI config; they do not produce a new version.
+
+By following this scheme, our CI can automatically derive semantic-release bumps and keep changelogs up to date.
+
 ## Coding conventions
 
 Please follow the style guide at https://developer.hashicorp.com/terraform/language/style when making
