@@ -1,4 +1,4 @@
-resource "aws_appstream_fleet" "pam_appstream_fleet" {
+resource "aws_appstream_fleet" "appstream_fleet" {
   for_each = { for config in var.fleet_configs : config.fleet_name => config }
   name     = each.value.fleet_name
 
@@ -23,21 +23,13 @@ resource "aws_appstream_fleet" "pam_appstream_fleet" {
   
 }
 
-resource "aws_appstream_stack" "pam_appstream_stack" {
+resource "aws_appstream_stack" "appstream_stack" {
   name         = var.stack_name
   description  = var.stack_description
   display_name = var.stack_display_name
 
   dynamic "user_settings" {
-    for_each = [
-      { action = "CLIPBOARD_COPY_FROM_LOCAL_DEVICE", permission = "ENABLED" },
-      { action = "CLIPBOARD_COPY_TO_LOCAL_DEVICE", permission = "DISABLED" },
-      { action = "DOMAIN_PASSWORD_SIGNIN", permission = "ENABLED" },
-      { action = "DOMAIN_SMART_CARD_SIGNIN", permission = "DISABLED" },
-      { action = "FILE_DOWNLOAD", permission = "DISABLED" },
-      { action = "FILE_UPLOAD", permission = "DISABLED" },
-      { action = "PRINTING_TO_LOCAL_DEVICE", permission = "DISABLED" }
-    ]
+    for_each = var.user_settings
     content {
       action     = user_settings.value.action
       permission = user_settings.value.permission
@@ -55,13 +47,13 @@ resource "null_resource" "manage_homefolder" {
     if [ "${var.enable_homefolder}" = "true" ]; then
       echo "Enabling HOMEFOLDER storage connector..."
       aws appstream update-stack \
-        --name "${aws_appstream_stack.pam_appstream_stack.name}" \
+        --name "${aws_appstream_stack.appstream_stack.name}" \
         --region "${var.region}" \
         --storage-connectors "ConnectorType=HOMEFOLDERS"
     else
       echo "Disabling HOMEFOLDER storage connector..."
       aws appstream update-stack \
-        --name "${aws_appstream_stack.pam_appstream_stack.name}" \
+        --name "${aws_appstream_stack.appstream_stack.name}" \
         --region "${var.region}" \
         --delete-storage-connectors
     fi
@@ -72,7 +64,7 @@ resource "null_resource" "manage_homefolder" {
     enable_homefolder = var.enable_homefolder
   }
 
-  depends_on = [aws_appstream_stack.pam_appstream_stack]
+  depends_on = [aws_appstream_stack.appstream_stack]
 }
 
 resource "null_resource" "wait_for_fleet_running" {
@@ -83,12 +75,12 @@ resource "null_resource" "wait_for_fleet_running" {
     command = "${path.module}/check_fleet_status.sh ${var.associated_fleet} ${var.region}"
   }
 
-  depends_on = [aws_appstream_fleet.pam_appstream_fleet]
+  depends_on = [aws_appstream_fleet.appstream_fleet]
 }
 
-resource "aws_appstream_fleet_stack_association" "pam" {
-  fleet_name = aws_appstream_fleet.pam_appstream_fleet[var.associated_fleet].name
-  stack_name = aws_appstream_stack.pam_appstream_stack.name
+resource "aws_appstream_fleet_stack_association" "this" {
+  fleet_name = aws_appstream_fleet.appstream_fleet[var.associated_fleet].name
+  stack_name = aws_appstream_stack.appstream_stack.name
 
   depends_on = [
     null_resource.wait_for_fleet_running
@@ -104,7 +96,7 @@ resource "aws_appautoscaling_target" "appstream_target" {
   service_namespace  = "appstream"
 
   depends_on = [
-    aws_appstream_fleet.pam_appstream_fleet
+    aws_appstream_fleet.appstream_fleet
   ]
 }
 
@@ -122,7 +114,7 @@ resource "aws_appautoscaling_scheduled_action" "appstream_scale_up" {
   }
 
   depends_on = [
-    aws_appstream_fleet.pam_appstream_fleet
+    aws_appstream_fleet.appstream_fleet
   ]
 }
 
@@ -140,7 +132,7 @@ resource "aws_appautoscaling_scheduled_action" "appstream_scale_down" {
   }
 
   depends_on = [
-    aws_appstream_fleet.pam_appstream_fleet
+    aws_appstream_fleet.appstream_fleet
   ]
 }
 
@@ -164,7 +156,7 @@ resource "aws_appautoscaling_policy" "scale_out_policy" {
   }
 
   depends_on = [
-    aws_appstream_fleet.pam_appstream_fleet
+    aws_appstream_fleet.appstream_fleet
   ]
 }
 
@@ -188,7 +180,7 @@ resource "aws_appautoscaling_policy" "scale_in_policy" {
   }
 
   depends_on = [
-    aws_appstream_fleet.pam_appstream_fleet
+    aws_appstream_fleet.appstream_fleet
   ]
 }
 
@@ -211,7 +203,7 @@ resource "aws_cloudwatch_metric_alarm" "scale_out_alarm" {
   alarm_actions     = [aws_appautoscaling_policy.scale_out_policy[each.value.fleet_name].arn]
 
   depends_on = [
-    aws_appstream_fleet.pam_appstream_fleet
+    aws_appstream_fleet.appstream_fleet
   ]
 }
 
@@ -234,12 +226,12 @@ resource "aws_cloudwatch_metric_alarm" "scale_in_alarm" {
   alarm_actions     = [aws_appautoscaling_policy.scale_in_policy[each.value.fleet_name].arn]
 
   depends_on = [
-    aws_appstream_fleet.pam_appstream_fleet
+    aws_appstream_fleet.appstream_fleet
   ]
 }
 
 resource "null_resource" "create-appstream-usage-report" {
-  depends_on = [aws_appstream_stack.pam_appstream_stack]
+  depends_on = [aws_appstream_stack.appstream_stack]
   provisioner "local-exec" {
     command = "aws appstream create-usage-report-subscription"
   }

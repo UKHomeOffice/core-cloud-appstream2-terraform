@@ -3,18 +3,22 @@ resource "aws_security_group" "appstream_security_group" {
   vpc_id = var.appstream_vpc_id
 }
 
-resource "aws_vpc_security_group_ingress_rule" "allow_all_inbbound" {
-  security_group_id = aws_security_group.appstream_security_group.id
+# Ingress rules driven by ingress_cidr_blocks list
+resource "aws_vpc_security_group_ingress_rule" "allow_inbound" {
+  for_each = toset(var.ingress_cidr_blocks)
 
-  cidr_ipv4   = "10.111.3.0/24"
-  from_port   = 443
-  ip_protocol = "tcp"
-  to_port     = 443
+  security_group_id = aws_security_group.appstream_security_group.id
+  cidr_ipv4         = each.key
+  from_port         = var.ingress_from_port
+  to_port           = var.ingress_to_port
+  ip_protocol       = var.ingress_protocol
 }
 
-resource "aws_vpc_security_group_egress_rule" "allow_all_outbound" {
-  security_group_id = aws_security_group.appstream_security_group.id
+# Egress rules driven by egress_cidr_blocks list
+resource "aws_vpc_security_group_egress_rule" "allow_outbound" {
+  for_each = toset(var.egress_cidr_blocks)
 
-  cidr_ipv4   = "0.0.0.0/0"
-  ip_protocol = -1
+  security_group_id = aws_security_group.appstream_security_group.id
+  cidr_ipv4         = each.key
+  ip_protocol       = var.egress_protocol
 }
