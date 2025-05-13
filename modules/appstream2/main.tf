@@ -17,7 +17,7 @@ resource "aws_appstream_fleet" "appstream_fleet" {
   max_user_duration_in_seconds       = var.max_user_duration_in_seconds
 
   vpc_config {
-    security_group_ids = [var.security_group_ids]
+    security_group_ids = var.security_group_ids
     subnet_ids         = var.subnet_ids
   }
   
