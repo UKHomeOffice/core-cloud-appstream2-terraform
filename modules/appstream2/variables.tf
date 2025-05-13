@@ -62,8 +62,6 @@ variable "max_user_duration_in_seconds" {
   description = "(Optional) Maximum amount of time that a streaming session can remain active, in seconds."
   type        = number
 }
-# variable "Environment" {}
-# variable "Project" {}
 
 variable "subnet_ids" {
   description = "List of subnet IDs for the fleet’s VPC configuration"

@@ -18,7 +18,7 @@ resource "aws_appstream_fleet" "appstream_fleet" {
 
   vpc_config {
     security_group_ids = [var.security_group_ids]
-    subnet_ids         = var.subnet_id
+    subnet_ids         = var.subnet_ids
   }
   
 }
