@@ -96,15 +96,10 @@ variable "region" {
 }
 
 variable "enable_homefolder" {
-  description = "Enable or disable the HOMEFOLDER storage connector."
+  description = "Enable or disable the HOMEFOLDER storage connector on the Stack."
   type        = bool
   # default     = false  # Default to false to disable HOMEFOLDER
 }
-# variable "enable_homefolder" {
-#   description = "Whether to enable the HOMEFOLDER storage connector on the Stack"
-#   type        = bool
-#   default     = false
-# }
 
 // Scalling Policy
 variable "scale_out_metric_interval_upper_bound" {
