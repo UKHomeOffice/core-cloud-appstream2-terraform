@@ -43,6 +43,8 @@ resource "aws_appstream_stack" "appstream_stack" {
 
 resource "null_resource" "manage_homefolder" {
   provisioner "local-exec" {
+    interpreter = ["bash", "-lc"]
+
     command = <<EOT
     if [ "${var.enable_homefolder}" = "true" ]; then
       echo "Enabling HOMEFOLDER storage connector..."
@@ -71,7 +73,11 @@ resource "null_resource" "wait_for_fleet_running" {
   triggers = {
     always_run = timestamp()
   }
+
   provisioner "local-exec" {
+    # run under bash -l so /usr/local/bin/aws is on PATH
+    interpreter = ["bash", "-lc"]
+
     command = "${path.module}/check_fleet_status.sh ${var.associated_fleet} ${var.region}"
   }
 
@@ -233,6 +239,7 @@ resource "aws_cloudwatch_metric_alarm" "scale_in_alarm" {
 resource "null_resource" "create-appstream-usage-report" {
   depends_on = [aws_appstream_stack.appstream_stack]
   provisioner "local-exec" {
+    interpreter = ["bash", "-lc"]
     command = "aws appstream create-usage-report-subscription"
   }
 }
