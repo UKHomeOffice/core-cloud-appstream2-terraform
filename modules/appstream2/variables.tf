@@ -34,6 +34,12 @@ variable "fleet_type" {
   type        = string
 }
 
+variable "stream_view" {
+  description = "(Optional) AppStream 2.0 view that is displayed to your users when they stream from the fleet."
+  type    = string
+  # default = "APP"
+}
+
 # Multi-fleet autoscaling configs
 variable "fleet_configs" {
   description = "List of fleet-specific autoscaling configs"
@@ -72,7 +78,6 @@ variable "security_group_ids" {
   description = "List of security group IDs to attach to the fleet"
   type        = list(string)
 }
-
 
 # Appstream Stack
 variable "stack_name" {

@@ -12,6 +12,7 @@ resource "aws_appstream_fleet" "appstream_fleet" {
   display_name                       = var.display_name
   enable_default_internet_access     = var.enable_default_internet_access
   fleet_type                         = var.fleet_type
+  stream_view                        = var.stream_view
   image_arn                          = each.value.image_arn
   instance_type                      = var.instance_type
   max_user_duration_in_seconds       = var.max_user_duration_in_seconds
