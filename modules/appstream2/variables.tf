@@ -36,7 +36,7 @@ variable "fleet_type" {
 
 variable "stream_view" {
   description = "(Optional) AppStream 2.0 view that is displayed to your users when they stream from the fleet."
-  type    = string
+  type        = string
   # default = "APP"
 }
 
@@ -44,14 +44,14 @@ variable "stream_view" {
 variable "fleet_configs" {
   description = "List of fleet-specific autoscaling configs"
   type = list(object({
-    fleet_name       = string
-    image_arn        = string
-    min_capacity     = number
-    max_capacity     = number
-    scale_up_cron    = string
-    scale_down_cron  = string
-    min_wh_capacity  = number
-    max_wh_capacity  = number
+    fleet_name      = string
+    image_arn       = string
+    min_capacity    = number
+    max_capacity    = number
+    scale_up_cron   = string
+    scale_down_cron = string
+    min_wh_capacity = number
+    max_wh_capacity = number
   }))
 }
 
@@ -134,12 +134,13 @@ variable "user_settings" {
     permission = string
   }))
   default = [
+    { action = "AUTO_TIME_ZONE_REDIRECTION", permission = "DISABLED" },
     { action = "CLIPBOARD_COPY_FROM_LOCAL_DEVICE", permission = "ENABLED" },
-    { action = "CLIPBOARD_COPY_TO_LOCAL_DEVICE",   permission = "DISABLED" },
-    { action = "DOMAIN_PASSWORD_SIGNIN",           permission = "ENABLED" },
-    { action = "DOMAIN_SMART_CARD_SIGNIN",         permission = "DISABLED" },
-    { action = "FILE_DOWNLOAD",                    permission = "DISABLED" },
-    { action = "FILE_UPLOAD",                      permission = "DISABLED" },
-    { action = "PRINTING_TO_LOCAL_DEVICE",         permission = "DISABLED" },
+    { action = "CLIPBOARD_COPY_TO_LOCAL_DEVICE", permission = "DISABLED" },
+    { action = "DOMAIN_PASSWORD_SIGNIN", permission = "ENABLED" },
+    { action = "DOMAIN_SMART_CARD_SIGNIN", permission = "DISABLED" },
+    { action = "FILE_DOWNLOAD", permission = "DISABLED" },
+    { action = "FILE_UPLOAD", permission = "DISABLED" },
+    { action = "PRINTING_TO_LOCAL_DEVICE", permission = "DISABLED" },
   ]
 }
