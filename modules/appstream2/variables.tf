@@ -135,7 +135,7 @@ variable "user_settings" {
   }))
   default = [
     { action = "AUTO_TIME_ZONE_REDIRECTION", permission = "DISABLED" },
-    { action = "CLIPBOARD_COPY_FROM_LOCAL_DEVICE", permission = "ENABLED" },
+    { action = "CLIPBOARD_COPY_FROM_LOCAL_DEVICE", permission = "DISABLED" },
     { action = "CLIPBOARD_COPY_TO_LOCAL_DEVICE", permission = "DISABLED" },
     { action = "DOMAIN_PASSWORD_SIGNIN", permission = "ENABLED" },
     { action = "DOMAIN_SMART_CARD_SIGNIN", permission = "DISABLED" },
